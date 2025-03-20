@@ -25,7 +25,7 @@ jobs:
                   docker build . -t ${{ secrets.ACR_NAME }}/ecommerce_user_service:${{ github.sha }}
                   docker push ${{ secrets.ACR_NAME }}/ecommerce_user_service:${{ github.sha }}
             
-            // Azure WebApps Deploy - Deploy the image to Azure WebApp
+            # Azure WebApps Deploy - Deploy the image to Azure WebApp
             - name: Azure WebApps Deploy
               uses: azure/webapps-deploy@v2
               with:
