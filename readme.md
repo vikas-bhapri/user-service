@@ -4,7 +4,7 @@ This service provides endpoints for user registration and authentication using P
 
 ## Installation
 
-### Prerequisites:
+### Prerequisites
 
 - Python 3.6 or later
 - pip
@@ -76,3 +76,5 @@ Once the image is pushed, deploy it using a container service such as:
 - **Google Cloud**: Cloud Run, GKE
 
 This ensures a scalable and managed deployment of your FastAPI service.
+
+Make sure to setup the environment variables in the cloud to ensure the working of the app.
