@@ -5,27 +5,28 @@ on:
             - main
 
 jobs:
-    runs-on: ubuntu-latest
-    steps:
-        - name: Checkout code
-          uses: actions/checkout@v2
+    build and deploy:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@v2
 
-        - name: Docker login
-          uses: azure/docker-login@v1
-          with:
-            login-server: ${{ secrets.ACR_NAME }}
-            username: ${{ secrets.ACR_USERNAME }}
-            password: ${{ secrets.ACR_PASSWORD }}
+            - name: Docker login
+            uses: azure/docker-login@v1
+            with:
+                login-server: ${{ secrets.ACR_NAME }}
+                username: ${{ secrets.ACR_USERNAME }}
+                password: ${{ secrets.ACR_PASSWORD }}
 
-        - name: Build and push
-          run: |
-            docker build . -t ${{ secrets.ACR_NAME }}/ecommerce_user_service:{{ github.sha }}
-            docker push ${{ secrets.ACR_NAME }}/ecommerce_user_service:{{ github.sha }}
-        
-        - name: Azure WebApps Deploy
-          run: azure/webapps-deploy@v2
-          with:
-            app-name: 'vikasbhapri'
-            images: '${{ secrets.ACR_NAME }}/ecommerce_user_service:{{ github.sha }}'
-            publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
+            - name: Build and push
+            run: |
+                docker build . -t ${{ secrets.ACR_NAME }}/ecommerce_user_service:{{ github.sha }}
+                docker push ${{ secrets.ACR_NAME }}/ecommerce_user_service:{{ github.sha }}
+            
+            - name: Azure WebApps Deploy
+            run: azure/webapps-deploy@v2
+            with:
+                app-name: 'vikasbhapri'
+                images: '${{ secrets.ACR_NAME }}/ecommerce_user_service:{{ github.sha }}'
+                publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
     
