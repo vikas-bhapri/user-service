@@ -6,9 +6,9 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-SQLALCHEMY_DATABASE_URL = os.getenv("DATABASE_HOST")
+SQLALCHEMY_DATABASE_URL = os.getenv("DATABASE_CONNECTION_STRING")
 
-engine = create_engine(SQLALCHEMY_DATABASE_URL, connect_args={"check_same_thread": False})
+engine = create_engine(SQLALCHEMY_DATABASE_URL)
 
 # Create a Session class
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
