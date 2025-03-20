@@ -2,6 +2,8 @@
 
 This service provides endpoints for user registration and authentication using Python FastAPI. It allows users to register with a username and password and authenticate themselves to access protected resources. The service ensures secure handling of user credentials and supports JWT-based authentication.
 
+Test the APIs for the user service on [User service](https://vikasbhapri.azurewebsites.net/redoc)
+
 ## Installation
 
 ### Prerequisites
