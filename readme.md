@@ -77,4 +77,4 @@ Once the image is pushed, deploy it using a container service such as:
 
 This ensures a scalable and managed deployment of your FastAPI service.
 
-Make sure to setup the environment variables in the cloud to ensure the working of the app.
+>**Note** Make sure to setup the environment variables in the cloud to ensure the working of the app.
