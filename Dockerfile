@@ -1,18 +1,13 @@
-FROM python:3.12.9-slim-bullseye
+FROM python:3.11
 
-# Set the working directory
-WORKDIR /app
+WORKDIR /code
 
-# Copy the requirements file
 COPY requirements.txt .
 
-# Install the dependencies
-RUN pip install -r requirements.txt
+RUN pip install --no-cache-dir --upgrade -r requirements.txt
 
-# Copy the content of the local directory to the working directory
 COPY . .
 
-# Command to run on container start
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
+EXPOSE 3100
 
-EXPOSE 8000
+CMD ["gunicorn", "--bind", "0.0.0.0:3100", "main:app", "--worker-class", "uvicorn.workers.UvicornWorker"]
