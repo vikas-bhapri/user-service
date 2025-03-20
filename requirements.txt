@@ -8,3 +8,5 @@ bcrypt
 python-multipart
 aiofiles
 dotenv
+psycopg2-binary
+gunicorn
