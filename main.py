@@ -11,7 +11,7 @@ load_dotenv()
 app = FastAPI(
     title="User Microservice",
     description="This is a simple user microservice using FastAPI",
-    version="1.0.3",
+    version="1.5.3",
     contact={
         "name": "Vikas Bhapri",
         "email": "vikasbhapri@gmail.com"
