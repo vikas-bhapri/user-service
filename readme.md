@@ -1,6 +1,6 @@
 # User Creation and Login Service using Python FastAPI
 
-![User Service CI](https://github.com/vikas-bhapri/user-service/actions/workflows/actions.yml/badge.svg?v=1)
+[![User Service CI](https://github.com/vikas-bhapri/user-service/actions/workflows/actions.yml/badge.svg?event=pull_request)](https://github.com/vikas-bhapri/user-service/actions/workflows/actions.yml)
 
 This service provides endpoints for user registration and authentication using Python FastAPI. It allows users to register with a username and password and authenticate themselves to access protected resources. The service ensures secure handling of user credentials and supports JWT-based authentication.
 
