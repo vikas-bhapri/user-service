@@ -27,10 +27,18 @@ def validate_user(current_user = Depends(get_current_user)):
 @router.put("/")
 def update_password(email: str, request: user_schema.UpdatePassword, db: Session = Depends(get_db), current_user = Depends(get_current_user)):
     if current_user.email != email:
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Unauthorized")
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Unauthorized. Check entered email.")
     
     user_controller.update_password(email, request, db)
     return {"message": "Password updated successfully"}
+
+@router.patch("/", response_model=user_schema.DisplayUser, status_code=status.HTTP_200_OK)
+def update_user(email: str, request: user_schema.UpdateUserData, db: Session = Depends(get_db), current_user = Depends(get_current_user)):
+    if current_user.email != email:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Unauthorized")
+    
+    user = user_controller.update_user(email, request, db)
+    return user
 
 @router.delete("/")
 def delete_user(email: str, request: user_schema.DeleteUser, db: Session = Depends(get_db), current_user = Depends(get_current_user)):
