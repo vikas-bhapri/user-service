@@ -16,7 +16,9 @@ def create_user(request: user_schema.User, db: Session = Depends(get_db)):
     return new_user
 
 @router.get("/", response_model=user_schema.DisplayUser)
-def get_user(email: str, db: Session = Depends(get_db)):
+def get_user(email: str, db: Session = Depends(get_db), current_user = Depends(get_current_user)):
+    if not current_user.role in ["admin", "seller"] and current_user.email != email:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Unauthorized")
     user = user_controller.get_user(email, db)
     return user
 
