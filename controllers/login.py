@@ -68,37 +68,37 @@ def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(
     except JWTError:
         raise credentials_exception
     
-def refresh_token(token: str = Cookie(None), response: Response = None, db: Session = Depends(get_db)):
+def refresh_token(token: str = Cookie(None), db: Session = Depends(get_db)):
     if not token:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid credentials")
     
-    payload = jwt.decode(token, JWT_SECRET, algorithms=[ALGORITHM])
-    if not payload:
+    try:
+        payload = jwt.decode(token, JWT_SECRET, algorithms=[ALGORITHM])
+    except JWTError:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid credentials")
     
     refresh_token_obj = db.query(model.RefreshToken).filter(model.RefreshToken.token == token).first()
     if not refresh_token_obj or refresh_token_obj.is_expired():
+        try:
+            db.delete(refresh_token_obj)
+            db.commit()
+        except Exception as e:
+            db.rollback()
+            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid credentials")
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid credentials")
     
     user = db.query(model.User).filter(model.User.id == refresh_token_obj.user_id).first()
     if not user:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Invalid credentials")
     
-    refresh_token_obj.revoked = True
-    
-    new_access_token = create_access_token(data={"sub": user.username, "role": user.role, "email": user.email}, expiry_delta=timedelta(minutes=EXPIRY_MINUTES))  # 30 minutes expiry for access token
-    new_refresh_token = create_access_token(data={"sub": user.username, "role": user.role, "email": user.email}, expiry_delta=timedelta(days=EXPIRY_DAYS))  # 30 days expiry for refresh token
-
-    new_refresh_token_obj = model.RefreshToken(
-        token=new_refresh_token,
-        user_id=user.id,
-        expires_at=datetime.utcnow() + timedelta(days=EXPIRY_DAYS),
+    # Generate a new access token
+    new_access_token = create_access_token(
+        data={"sub": user.username, "role": user.role, "email": user.email},
+        expiry_delta=timedelta(minutes=EXPIRY_MINUTES)
     )
-    db.add(new_refresh_token_obj)
-    db.commit()
-    db.refresh(new_refresh_token_obj)
 
-    response.set_cookie(key="refresh_token", value=new_refresh_token, httponly=True, max_age=60*60*24*30, expires=60*60*24*30, samesite="strict", secure=True)
+    # Commit the changes to revoke the old refresh token
+    db.commit()
 
     return {"access_token": new_access_token, "token_type": "bearer"}
 
@@ -115,4 +115,3 @@ def logout(token: str = Cookie(None), response: Response = None, db: Session = D
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Token not found")
 
 
-        
