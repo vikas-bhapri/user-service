@@ -1,7 +1,9 @@
-from sqlalchemy import Column, Integer, String, BigInteger
+from sqlalchemy import Column, ForeignKey, Integer, String, BigInteger, DateTime, Boolean
+from sqlalchemy.orm import relationship
 from database import Base
 import uuid
 from sqlalchemy.dialects.postgresql import UUID
+from datetime import datetime
 
 class User(Base):
     __tablename__ = "users"
@@ -22,3 +24,20 @@ class User(Base):
     country = Column(String, nullable=False)
     country_code = Column(String, nullable=False)
     phone = Column(BigInteger, nullable=False)
+    refresh_token = relationship("RefreshToken", back_populates="user", uselist=False)
+
+class RefreshToken(Base):
+    __tablename__ = "refresh_tokens"
+
+    id = Column(Integer, primary_key=True, index=True)
+    token = Column(String, unique=True, nullable=False)
+    user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
+    user = relationship("User", back_populates="refresh_token")
+    created_at = Column(DateTime, default=datetime.utcnow, nullable=False)
+    expires_at = Column(DateTime)
+    revoked = Column(Boolean, default=False, nullable=False)
+
+    def is_expired(self):
+        return datetime.utcnow() > self.expires_at or self.revoked
+
+
