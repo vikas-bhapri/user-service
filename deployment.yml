@@ -1,0 +1,53 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ecommerce-users-deployment
+spec:
+  selector:
+    matchLabels:
+      app: users
+  template:
+    metadata:
+      labels:
+        app: users
+    spec:
+      containers:
+      - name: users
+        image: vikasbhapri.azurecr.io/ecommerce_user_service:3b68ae74581798ab4ad0bf8c7c414918fd0b1168
+        ports:
+        - containerPort: 3100
+        resources:
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+          requests:
+            memory: "256Mi"
+            cpu: "250m"
+        env:
+        - name: JWT_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: ecommerce-users-secret
+              key: JWT_SECRET
+        - name: JWT_ALGORITHM
+          valueFrom:
+            secretKeyRef:
+              name: ecommerce-users-secret
+              key: JWT_ALGORITHM
+        - name: TOKEN_EXPIRY_MINUTES
+          valueFrom:
+            secretKeyRef:
+              name: ecommerce-users-secret
+              key: TOKEN_EXPIRY_MINUTES
+        - name: DATABASE_CONNECTION_STRING
+          valueFrom:
+            secretKeyRef:
+              name: ecommerce-users-secret
+              key: DATABASE_CONNECTION_STRING
+        - name: TOKEN_EXPIRY_DAYS
+          valueFrom:
+            secretKeyRef:
+              name: ecommerce-users-secret
+              key: TOKEN_EXPIRY_DAYS
+
+

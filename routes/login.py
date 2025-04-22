@@ -15,8 +15,8 @@ def login(request: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(
     return access_token
 
 @router.post("/refresh", response_model=login_schema.AccessToken)
-def refresh_token(refresh_token: str = Cookie(...), db: Session = Depends(get_db)):
-    access_token = login_controller.refresh_token(refresh_token, db)
+def refresh_token(refresh_token: str = Cookie(...), response: Response = None, db: Session = Depends(get_db)):
+    access_token = login_controller.refresh_token(refresh_token, response, db)
     return access_token
 
 @router.post("/logout")
